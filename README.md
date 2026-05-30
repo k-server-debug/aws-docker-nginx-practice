@@ -150,3 +150,73 @@ permission denied
 * Dockerfile을 통한 이미지 생성
 * AWS Security Group 역할
 * 문제 발생 시 원인 추적 방법
+
+
+# AWS Docker Nginx Practice
+
+## Overview
+
+This project is a practice environment for learning:
+
+* AWS EC2
+* Linux
+* Docker
+* Docker Compose
+* Nginx
+* GitHub
+
+---
+
+## Architecture
+
+Browser
+↓
+Security Group
+↓
+EC2
+↓
+Docker Container (Nginx)
+↓
+index.html
+
+---
+
+## What I Practiced
+
+* EC2 instance creation
+* SSH connection
+* Linux commands
+* Nginx installation
+* Docker installation
+* Docker container execution
+* Dockerfile creation
+* Docker image build
+* GitHub upload
+
+---
+
+## Files
+
+### index.html
+
+Simple HTML page.
+
+### Dockerfile
+
+Custom Nginx image build.
+
+---
+
+## Troubleshooting
+
+### Permission denied
+
+Solved by fixing Linux file permissions.
+
+### Port already allocated
+
+Solved by stopping existing containers.
+
+### GitHub authentication
+
+Solved using GitHub Personal Access Token.
