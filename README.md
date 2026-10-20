@@ -1,222 +1,153 @@
-# AWS EC2 + Docker + Nginx Practice
+# AWS Docker Nginx Portfolio
 
-## 목표
+## 1. プロジェクト概要
 
-AWS EC2 서버에 Docker를 설치하고 nginx 컨테이너를 실행하여 직접 만든 HTML 페이지를 배포한다.
+DockerとNginxを使用してWebサーバー環境を構築し、
+静的なWebページを配信する学習プロジェクトです。
 
----
+AWS EC2上での実行を想定し、Linux、Docker、
+Docker Composeを利用したサーバー構築の基礎を学習します。
 
-## 사용 기술
+## 2. プロジェクトの目的
 
-* AWS EC2
-* Amazon Linux
-* SSH
-* Nginx
-* Docker
-* Docker Compose
+- Dockerによるコンテナ環境の構築
+- Dockerfileを使用したイメージの作成
+- Docker Composeによるコンテナ管理
+- Nginxを利用したWebページの配信
+- ポートマッピングの理解
+- サーバーの状態確認とログ調査
 
----
+## 3. 使用技術
 
-## 구성도
+| 技術 | 用途 |
+|---|---|
+| AWS EC2 | クラウド上のサーバー環境 |
+| Amazon Linux 2023 | Linuxサーバー環境 |
+| Docker | コンテナの実行環境 |
+| Docker Compose | コンテナの起動・管理 |
+| Nginx | Webサーバー |
+| HTML / CSS | Webページの作成 |
+| Git / GitHub | ソースコードの管理 |
 
-Browser
-↓
-Security Group (8000)
-↓
-EC2
-↓
-Docker Container (nginx)
-↓
+※ 実際に使用・検証した技術は、作業完了後に確定します。
+
+## 4. システム構成
+
+```text
+Web Browser
+     |
+     | HTTP :8000
+     v
+AWS EC2
+     |
+     | Security Group
+     v
+Docker Container
+     |
+     | Port Mapping :8000 -> :80
+     v
+Nginx
+     |
+     v
 index.html
+```
 
----
+※ 上記は想定構成です。EC2への再デプロイ後に実際の構成を確認します。
 
-## 실습 내용
+## 5. ファイル構成
 
-### 1. EC2 생성 및 SSH 접속
+```text
+aws-docker-nginx-practice/
+├── Dockerfile
+├── compose.yaml
+├── index.html
+├── .dockerignore
+└── README.md
+```
 
-* AWS EC2 인스턴스 생성
-* Security Group 설정
-* SSH 접속 성공
+## 6. Dockerfile
 
-### 2. nginx 설치
+Dockerfileを使用してNginxのイメージを作成します。
 
-* nginx 설치
-* 서비스 실행
-* 브라우저 접속 확인
-
-### 3. Docker 설치
-
-* Docker 설치
-* Docker 서비스 실행
-* nginx 컨테이너 실행
-
-### 4. Volume 연결
-
-/myweb 폴더 생성
-
-index.html 작성
-
-Docker Volume을 이용하여 nginx와 연결
-
-### 5. Docker Compose
-
-docker-compose.yml 생성
-
-Compose를 이용한 nginx 컨테이너 실행
-
-### 6. Dockerfile
-
-Dockerfile 작성
-
+```dockerfile
 FROM nginx
-
 COPY index.html /usr/share/nginx/html/index.html
+```
 
-Docker Image 생성
+`index.html`をNginxのドキュメントルートに配置し、
+コンテナ起動後にWebページを配信できるようにします。
 
-docker build -t myweb .
+## 7. Docker Compose
 
-직접 만든 이미지 실행
+Docker Composeを使用してコンテナを起動します。
 
-docker run -d -p 8000:80 myweb
+```yaml
+services:
+  web:
+    build: .
+    ports:
+      - "8000:80"
+    restart: unless-stopped
+```
 
----
+- `build: .`：同じディレクトリのDockerfileからイメージを作成
+- `8000:80`：ホストの8000番ポートをコンテナの80番ポートに接続
+- `restart: unless-stopped`：明示的に停止しない限り再起動を試みる
 
-## 문제 해결 경험
+## 8. 起動・動作確認
 
-### 문제 1
+Dockerがインストールされた環境で実行します。
 
-SSH 접속 실패
+### コンテナの起動
 
-원인:
+```bash
+docker compose up --build -d
+```
 
-* pem 파일 이름 오타
+### コンテナの状態確認
 
-해결:
+```bash
+docker compose ps
+```
 
-* 올바른 pem 파일 지정
+### HTTPレスポンスの確認
 
----
+```bash
+curl -I http://localhost:8000
+```
 
-### 문제 2
+### ログの確認
 
-브라우저 접속 실패
+```bash
+docker compose logs
+```
 
-원인:
+### コンテナの停止
 
-* Security Group 8000 포트 미개방
+```bash
+docker compose down
+```
 
-해결:
+※ 上記コマンドは実行手順です。実際の動作確認結果は検証後に記録します。
 
-* Inbound Rule 추가
+## 9. セキュリティ上の考慮事項
 
----
+- SSH接続用の秘密鍵をGitHubにアップロードしない
+- AWSのアクセスキーやパスワードをソースコードに記載しない
+- Security Groupで不要なポートを公開しない
+- SSH接続元のIPアドレスを必要に応じて制限する
+- 公開前に設定ファイルやGitの履歴に機密情報がないか確認する
 
-### 문제 3
+## 10. 今後の改善予定
 
-port is already allocated
+- AWS EC2環境への再デプロイ
+- HTTPアクセスとコンテナの動作確認
+- Nginxのアクセスログ・エラーログの調査
+- トラブルシューティング記録の追加
+- READMEと実際のシステム構成の整合性確認
 
-원인:
+## 11. 学習成果
 
-* 기존 컨테이너가 8000 포트 사용 중
-
-해결:
-
-* 기존 컨테이너 stop / rm
-
----
-
-### 문제 4
-
-permission denied
-
-원인:
-
-* Dockerfile 생성 권한 부족
-
-해결:
-
-* sudo 사용
-
----
-
-## 배운 점
-
-* Docker Image와 Container의 차이
-* Port Mapping 개념
-* Volume 연결 방법
-* Docker Compose 사용법
-* Dockerfile을 통한 이미지 생성
-* AWS Security Group 역할
-* 문제 발생 시 원인 추적 방법
-
-
-# AWS Docker Nginx Practice
-
-## Overview
-
-This project is a practice environment for learning:
-
-* AWS EC2
-* Linux
-* Docker
-* Docker Compose
-* Nginx
-* GitHub
-
----
-
-## Architecture
-
-Browser
-↓
-Security Group
-↓
-EC2
-↓
-Docker Container (Nginx)
-↓
-index.html
-
----
-
-## What I Practiced
-
-* EC2 instance creation
-* SSH connection
-* Linux commands
-* Nginx installation
-* Docker installation
-* Docker container execution
-* Dockerfile creation
-* Docker image build
-* GitHub upload
-
----
-
-## Files
-
-### index.html
-
-Simple HTML page.
-
-### Dockerfile
-
-Custom Nginx image build.
-
----
-
-## Troubleshooting
-
-### Permission denied
-
-Solved by fixing Linux file permissions.
-
-### Port already allocated
-
-Solved by stopping existing containers.
-
-### GitHub authentication
-
-Solved using GitHub Personal Access Token.
+本プロジェクトを通じて、Dockerによるコンテナ実行、
+Docker Composeによる環境管理、NginxによるWeb配信、
+ポートマッピング、Linuxサーバーの基本操作について理解を深めます。
