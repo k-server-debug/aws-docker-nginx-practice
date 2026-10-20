@@ -1,1 +1,139 @@
-<h1>hello Dongsik</h1>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Docker Nginx Portfolio</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, "Noto Sans JP", sans-serif;
+            background-color: #f4f7fb;
+            color: #263445;
+            line-height: 1.8;
+        }
+
+        header {
+            padding: 60px 20px;
+            background-color: #172b4d;
+            color: white;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 12px;
+            font-size: 32px;
+        }
+
+        header p {
+            margin: 0;
+            color: #d8e4f5;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            margin-bottom: 24px;
+            padding: 28px;
+            background-color: white;
+            border: 1px solid #e1e7ef;
+            border-radius: 10px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #174a7e;
+            font-size: 22px;
+        }
+
+        ul {
+            padding-left: 24px;
+        }
+
+        code {
+            padding: 3px 6px;
+            background-color: #edf2f7;
+            border-radius: 4px;
+        }
+
+        footer {
+            padding: 24px;
+            background-color: #172b4d;
+            color: #d8e4f5;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 25px;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>AWS Docker Nginx Portfolio</h1>
+        <p>DockerとNginxを利用したWebサーバー構築学習プロジェクト</p>
+    </header>
+
+    <main>
+        <section>
+            <h2>1. プロジェクト概要</h2>
+            <p>
+                DockerとNginxを使用してWebサーバー環境を構築し、
+                静的なWebページを配信することを目的とした学習プロジェクトです。
+                AWS EC2へのデプロイも想定し、インフラ構築の基礎を学習しています。
+            </p>
+        </section>
+
+        <section>
+            <h2>2. 使用技術</h2>
+            <ul>
+                <li>Docker：アプリケーション実行環境の構築</li>
+                <li>Docker Compose：コンテナの起動・管理</li>
+                <li>Nginx：WebサーバーによるHTTPリクエストの処理</li>
+                <li>HTML / CSS：Webページの作成</li>
+                <li>AWS EC2 / Linux：クラウドサーバー構築の学習</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>3. 学習・検証項目</h2>
+            <ul>
+                <li>Dockerfileを使用したイメージのビルド</li>
+                <li>Docker Composeによるコンテナ管理</li>
+                <li>ホストとコンテナ間のポートマッピング</li>
+                <li>Nginxによる静的コンテンツの配信</li>
+                <li>コンテナの状態確認とログ調査</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. 今後の改善予定</h2>
+            <ul>
+                <li>AWS EC2環境へのデプロイと動作検証</li>
+                <li>アクセス制御とセキュリティ設定の見直し</li>
+                <li>障害発生時の調査手順と解決記録の整備</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>AWS Infrastructure Learning Portfolio</p>
+    </footer>
+</body>
+</html>
