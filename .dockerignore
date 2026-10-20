@@ -1,0 +1,22 @@
+# Git files
+.git
+.github
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Log files
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db
