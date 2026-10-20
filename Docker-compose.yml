@@ -1,7 +1,6 @@
 services:
   web:
-    image: nginx
+    build: .
     ports:
       - "8000:80"
-    volumes:
-      - /myweb:/usr/share/nginx/html:ro
+    restart: unless-stopped
