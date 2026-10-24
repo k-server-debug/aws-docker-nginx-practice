@@ -2,11 +2,15 @@
 
 ## 1. プロジェクト概要
 
-DockerとNginxを使用してWebサーバー環境を構築し、
-静的なWebページを配信する学習プロジェクトです。
+DockerとNginxを使用して静的なWebページを配信するプロジェクトです。
 
-AWS EC2上での実行を想定し、Linux、Docker、
-Docker Composeを利用したサーバー構築の基礎を学習します。
+ローカル環境のDocker Desktopで動作確認を行った後、
+AWS EC2上にデプロイし、外部ブラウザから
+Webページにアクセスできることを確認しました。
+
+Linuxサーバーの構築、Dockerによるコンテナ実行、
+ポートマッピング、Webサーバーの動作確認を通じて、
+インフラエンジニアに必要な基礎技術を学習しています。
 
 ## 2. プロジェクトの目的
 
@@ -29,30 +33,52 @@ Docker Composeを利用したサーバー構築の基礎を学習します。
 | HTML / CSS | Webページの作成 |
 | Git / GitHub | ソースコードの管理 |
 
-※ 実際に使用・検証した技術は、作業完了後に確定します。
-
 ## 4. システム構成
+
+### ローカル環境
 
 ```text
 Web Browser
      |
      | HTTP :8000
      v
-AWS EC2
-     |
-     | Security Group
-     v
-Docker Container
+Docker Desktop
      |
      | Port Mapping :8000 -> :80
      v
-Nginx
+Nginx Container
      |
      v
 index.html
 ```
 
-※ 上記は想定構成です。EC2への再デプロイ後に実際の構成を確認します。
+### AWS EC2環境
+
+```text
+Web Browser
+     |
+     | HTTP Request (TCP :80)
+     v
+Internet
+     |
+     v
+AWS EC2 Security Group
+     |
+     | Inbound TCP :80
+     v
+EC2 Instance
+(Amazon Linux 2023)
+     |
+     | Docker Port Mapping :80 -> :80
+     v
+Nginx Container
+     |
+     v
+index.html
+```
+
+ローカル環境ではホストの8000番ポートを使用し、
+AWS EC2環境では80番ポートを使用しています。
 
 ## 5. ファイル構成
 
@@ -72,11 +98,12 @@ Dockerfileを使用してNginxのイメージを作成します。
 
 ```dockerfile
 FROM nginx
-COPY index.html /usr/share/nginx/html/index.html
-```
 
-`index.html`をNginxのドキュメントルートに配置し、
-コンテナ起動後にWebページを配信できるようにします。
+COPY index.html /usr/share/nginx/html/index.html
+COPY favicon.svg /usr/share/nginx/html/favicon.svg
+```
+`index.html`と`favicon.svg`をNginxのドキュメントルートに配置し、
+Webページとファビコンを配信できるようにしています。
 
 ## 7. Docker Compose
 
@@ -97,7 +124,11 @@ services:
 
 ## 8. 起動・動作確認
 
-Dockerがインストールされた環境で実行します。
+以下のコマンドは、ローカル環境（Docker Desktop）で
+Docker Composeを利用して実行する手順です。
+
+AWS EC2環境では、Dockerイメージをビルドし、
+docker runコマンドでコンテナを起動しました。
 
 ### コンテナの起動
 
@@ -131,7 +162,7 @@ docker compose down
 
 ### ローカル環境での検証結果
 
-検証日：2026年10月22日
+検証日：2026年10月24日
 
 #### 実行環境
 - OS：Windows
@@ -178,8 +209,53 @@ Webページ本体が正常に表示されていても、
 ログを確認して原因を特定し、設定とファイル構成を修正することが
 重要だと学びました。
 
-※ 現時点ではローカル環境での検証結果です。
-AWS EC2へのデプロイと動作確認は今後実施します。
+### AWS EC2環境でのデプロイ結果
+
+#### 実行環境
+
+- クラウド：AWS EC2
+- リージョン：Asia Pacific (Osaka)
+- OS：Amazon Linux 2023
+- コンテナ実行環境：Docker
+- Webサーバー：Nginx
+- コンテナイメージ：aws-docker-nginx-portfolio
+
+#### 実施した作業
+
+1. AWS EC2インスタンスの作成
+2. Amazon Linux 2023環境の準備
+3. DockerとGitのインストール
+4. GitHubリポジトリのクローン
+5. Dockerイメージのビルド
+6. Nginxコンテナの起動
+7. HTTPポート80を利用した外部アクセスの確認
+
+#### 検証結果
+
+| 検証項目 | 結果 |
+|---|---|
+| Dockerイメージのビルド | 成功 |
+| Nginxコンテナの起動 | 成功 |
+| EC2のパブリックIPからのアクセス | 成功 |
+| ブラウザでのWebページ表示 | 成功 |
+
+#### デプロイ時に使用したコマンド
+
+```bash
+sudo docker build -t aws-docker-nginx-portfolio .
+```
+
+```bash
+sudo docker run -d \
+  --name portfolio-nginx \
+  -p 80:80 \
+  --restart unless-stopped \
+  aws-docker-nginx-portfolio
+```
+
+Dockerイメージを作成し、Nginxコンテナを起動しました。
+その後、EC2のパブリックIPアドレスを使用して
+外部ブラウザからWebページにアクセスできることを確認しました。
 
 ## 9. セキュリティ上の考慮事項
 
@@ -191,11 +267,11 @@ AWS EC2へのデプロイと動作確認は今後実施します。
 
 ## 10. 今後の改善予定
 
-- AWS EC2環境への再デプロイ
-- HTTPアクセスとコンテナの動作確認
-- Nginxのアクセスログ・エラーログの調査
-- トラブルシューティング記録の追加
-- READMEと実際のシステム構成の整合性確認
+- Dockerコンテナのログ調査手順の整備
+- AWS Security Groupの設定見直し
+- HTTPS対応の検討
+- AWS利用料金の管理
+- システム構成図と実際の設定の継続的な整合性確認
 
 ## 11. 学習成果
 
